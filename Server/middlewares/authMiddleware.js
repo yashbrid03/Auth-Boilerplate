@@ -1,11 +1,8 @@
 const jwt = require('jsonwebtoken');
 
 exports.authenticateToken = (req, res, next) => {
-  const cookie = req.headers.cookie;
-  if(!cookie){
-    return res.status(404).json({error:"Cookie expired"});
-  }
-  const token = cookie.split("=")[1];
+  const token = req.cookies.accessToken;
+  
 
   if (!token) {
     return res.status(401).json({ error: 'Access token required' });
@@ -28,4 +25,22 @@ exports.authorizeRole = (roles) => {
     }
     next();
   };
+};
+
+exports.refreshAuthenticateToken = (req, res, next) => {
+  const token = req.cookies.refreshToken;
+  console.log("refresh token ",token)
+
+  if (!token) {
+    console.log("hello")
+    return res.status(403).json({ error: 'You need to login' });
+  }
+
+  jwt.verify(token, process.env.JWT_REFRESH_SECRET, (err, user) => {
+    if (err) {
+      console.log("hello2")
+      return res.status(403).json({ error: 'You need to login' });
+    }
+    next();
+  });
 };

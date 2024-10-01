@@ -1,19 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-const { authenticateToken, authorizeRole } = require('../middlewares/authMiddleware');
+const { authenticateToken, authorizeRole, refreshAuthenticateToken } = require('../middlewares/authMiddleware');
 
 router.post('/register', authController.register);
 router.post('/login', authController.login);
-router.post('/refresh-token', authController.refreshToken);
+router.post('/refresh-token',refreshAuthenticateToken, authController.refreshToken);
 router.get('/verify-email/:token', authController.verifyEmail);
 router.post('/resend-verification', authController.resendVerificationEmail);
-
-// router.route('/register').post(authController.register)
-// router.route('/login').post(authController.login)
-// router.route('/refresh-token').post(authController.refreshToken)
-// router.route('/verify-email/:token').post(authController.verifyEmail)
-// router.route()
+router.post('/logout', authenticateToken, authController.logout);
+router.get('/checkauth', authenticateToken, authController.getUser)
 
 // Protected route example
 router.get('/protected', authenticateToken, authorizeRole(['user', 'admin']), (req, res) => {

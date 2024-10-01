@@ -53,12 +53,19 @@ exports.login = async (req, res) => {
     const accessToken = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '15m' });
     const refreshToken = jwt.sign({ userId: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
 
-    res.cookie(String(user.id),accessToken, {
-      path:"/",
-      expires : new Date(Date.now()+1000*30),
-      httpOnly:true,
-      sameSite: "lax"
-    })
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+      sameSite: 'strict',
+      maxAge: 1 * 30 * 1000 // 30 sec
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
     res.status(200).json("Logged in successfully");
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -67,8 +74,10 @@ exports.login = async (req, res) => {
 
 exports.refreshToken = async (req, res) => {
   try {
-    const { refreshToken } = req.body;
+    console.log("hello")
+    const  refreshToken  = req.cookies.refreshToken;
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    console.log("decoded :",refreshToken)
     const user = await User.findById(decoded.userId);
 
     if (!user) {
@@ -76,10 +85,24 @@ exports.refreshToken = async (req, res) => {
     }
 
     const accessToken = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '15m' });
-    res.json({ accessToken });
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 1 * 30 * 1000 //30 secs
+    });
+
+    res.json({ message: 'Token refreshed successfully' });
   } catch (error) {
+    console.log(error)
     res.status(401).json({ error: 'Invalid refresh token' });
   }
+};
+
+exports.logout = (req, res) => {
+  res.clearCookie('accessToken');
+  res.clearCookie('refreshToken');
+  res.json({ message: 'Logged out successfully' });
 };
 
 exports.verifyEmail = async (req, res) => {
@@ -104,3 +127,23 @@ exports.verifyEmail = async (req, res) => {
     res.status(400).json({ error: 'Invalid or expired verification token' });
   }
 };
+
+exports.getUser = async (req,res) =>{
+  try{
+    // console.log(res.header)
+    const token = req.cookies.accessToken;
+    console.log("inside getauth")
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+      if (err) {
+        return res.status(403).json({ error: 'Need to Login' });
+      }
+console.log({user})
+      res.status(200).json({user:user})
+      
+      // next();
+    });
+    // res.json({user :req.user})
+  }catch(error){
+    res.status(400).json({ error: 'Need Login' });
+  }
+}
