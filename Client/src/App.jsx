@@ -1,28 +1,19 @@
-import React from 'react';
-import { Routes, Route, redirect } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import Login from './pages/Login.jsx';
-import { useEffect } from 'react';
-import Dashboard from './pages/Dashboard.jsx';
-import PrivateRoute from './components/PrivateRoute.jsx';
-import api from './utils/api.js';
-import { setUser } from './redux/authSlice.js';
-
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Login from "./pages/Login.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
+import PrivateRoute from "./components/PrivateRoute.jsx";
+import { Verify } from "./pages/Verify.jsx";
 
 const App = () => {
-
- 
-
-  // useEffect
-
   return (
     <Routes>
-        <Route path="/login" element={<Login/>} />
-        <Route exact path='/' element={<PrivateRoute/>}>
-            <Route exact path='/dashboard' element={<Dashboard/>}/>
-          </Route>
-        {/* Add more routes as needed */}
-      
+      <Route path="/login" element={<Login />} />
+      <Route path="/verify-email/:token" element={<Verify />} />
+      <Route exact path="/" element={<PrivateRoute />}>
+        <Route exact path="/dashboard" element={<Dashboard />} />
+      </Route>
+      {/* Add more routes as needed */}
     </Routes>
   );
 };
