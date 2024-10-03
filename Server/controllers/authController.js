@@ -6,6 +6,13 @@ const sendEmail = require("../config/email");
 exports.register = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const exUser = await User.findOne({
+      email: email,
+    });
+
+    if(exUser){
+      res.status(403).json({error:"User with this mail already exists."})
+    }
     const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
@@ -46,6 +53,7 @@ exports.resendVerificationEmail = async (req, res) => {
       "Verify Your Email",
       `Click here to verify: ${process.env.FRONTEND_URL}/verify-email/${verificationToken}`
     );
+    return res.status(200).json({message:"please check email for verification"})
   } catch (error) {}
 };
 
