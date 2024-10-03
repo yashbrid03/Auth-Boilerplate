@@ -119,7 +119,7 @@ exports.verifyEmail = async (req, res) => {
     }
 
     user.isVerified = true;
-    user.verificationToken = undefined;
+    // user.verificationToken = undefined;
     await user.save();
 
     res.json({ message: 'Email verified successfully' });
