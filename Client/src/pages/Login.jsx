@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login, logout, setUser, checkAuth } from "../redux/authSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../utils/api";
 
 const Login = () => {
@@ -55,6 +55,21 @@ const Login = () => {
     getUser();
   }, [dispatch]);
 
+  const resetPass = async() =>{
+    if(email==""){
+      alert("enter email in the field");
+      return;
+    }
+      try{
+        const response = await api.post('/auth/email-reset-pass',{email});
+        alert("Check mail for password reset link")
+      }catch(error){
+        if(error.response.status == 400){
+          alert("Provided email is not registered")
+        }
+      }
+  }
+
   if (isUserLoading) {
     return <div>Loading...</div>; // Or a loading spinner component
   }
@@ -62,11 +77,13 @@ const Login = () => {
   if (user) {
     return (
       <>
-        <div>
-          You have already signed In please log out if you wish to login with
-          another account
+        <div className="w-full h-[100vh] flex items-center justify-center flex-col  ">
+          
+          <h1 className="text-2xl font-medium my-2">You have already signed In. Please log out if you wish to login with
+          another account</h1>
+          <button className="bg-red-400 px-3 py-2 rounded-lg font-bold " onClick={handleLogout}>logout</button>
         </div>
-        <button onClick={handleLogout}>logout</button>
+        
       </>
     );
   }
@@ -119,7 +136,7 @@ const Login = () => {
                 </div>
                 <div class="flex items-center justify-start">
                   <a
-                    href="#"
+                    onClick={resetPass}
                     class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >
                     Forgot password?
@@ -133,19 +150,21 @@ const Login = () => {
                 </button>
                 <p class="text-sm font-light text-gray-500 dark:text-gray-400">
                   Don’t have an account yet?{" "}
+                  <Link to={"/register"}>
                   <a
                     href="#"
                     class="font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >
                     Sign up
                   </a>
+                  </Link>
                 </p>
               </form>
             </div>
           </div>
         </div>
       </section>
-      <form onSubmit={handleSubmit}>
+      {/* <form onSubmit={handleSubmit}>
         <input
           type="email"
           value={email}
@@ -163,8 +182,8 @@ const Login = () => {
         <button type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
-      </form>
-      <button onClick={handleLogout}>logout</button>
+      </form> */}
+      {/* <button onClick={handleLogout}>logout</button> */}
     </>
   );
 };

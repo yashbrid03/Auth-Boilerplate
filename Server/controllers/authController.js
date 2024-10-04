@@ -2,6 +2,13 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const sendEmail = require("../config/email");
+const crypto = require('crypto');
+
+// Generate a unique token hash
+function generateTokenHash(email) {
+  const currentTime = Date.now().toString();
+  return crypto.createHash('sha256').update(email + currentTime).digest('hex');
+}
 
 exports.register = async (req, res) => {
   try {
@@ -10,8 +17,8 @@ exports.register = async (req, res) => {
       email: email,
     });
 
-    if(exUser){
-      res.status(403).json({error:"User with this mail already exists."})
+    if (exUser) {
+      res.status(403).json({ error: "User with this mail already exists." });
     }
     const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, {
       expiresIn: "1d",
@@ -53,8 +60,74 @@ exports.resendVerificationEmail = async (req, res) => {
       "Verify Your Email",
       `Click here to verify: ${process.env.FRONTEND_URL}/verify-email/${verificationToken}`
     );
-    return res.status(200).json({message:"please check email for verification"})
+    return res
+      .status(200)
+      .json({ message: "please check email for verification" });
   } catch (error) {}
+};
+
+exports.saveNewPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const pass = req.body.password;
+    console.log("savepass");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    console.log(decoded);
+    const user = await User.findOne({
+      email: decoded.email,
+    });
+
+    if (!user  || user.resetPasswordTokenHash !== decoded.tokenHash) {
+      return res
+        .status(400)
+        .json({ error: "Invalid or expired verification token" });
+    }
+    user.password = pass;
+    user.resetPasswordTokenHash = null;
+    await user.save();
+
+    res.status(200).json({ message: "password changed successfully" });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ error: "Invalid or expired verification token" });
+  }
+};
+
+exports.emailResetPass = async (req, res) => {
+  try {
+    const {email} = req.body;
+    const user = await User.findOne({
+      email: email,
+    });
+    console.log(email)
+
+    if (!user) {
+      return res.status(400).json({ error: "User is not registered." });
+    }
+
+    const tokenHash = generateTokenHash(email);
+
+    const resetToken = jwt.sign({ email, tokenHash }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    user.resetPasswordTokenHash = tokenHash;
+    await user.save();
+
+    sendEmail(
+      email,
+      "Your reset password link",
+      `Click here to reset your password: ${process.env.FRONTEND_URL}/forget-password/${resetToken}`
+    );
+    res.status(201).json({
+      message:
+        "Check Mail for password reset link",
+    });
+  } catch (error) {
+    res.status(403).json({ error: "Invalid request" });
+  }
 };
 
 exports.login = async (req, res) => {

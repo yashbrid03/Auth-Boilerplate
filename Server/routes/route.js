@@ -9,6 +9,8 @@ router.post('/refresh-token',refreshAuthenticateToken, authController.refreshTok
 router.get('/verify-email/:token', authController.verifyEmail);
 router.post('/resend-verification', authController.resendVerificationEmail);
 router.post('/logout', authenticateToken, authController.logout);
+router.post('/email-reset-pass',authController.emailResetPass)
+router.post('/save-new-password/:token', authController.saveNewPassword)
 router.get('/checkauth', authenticateToken, authController.getUser)
 
 // Protected route example
