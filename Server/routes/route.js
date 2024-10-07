@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
+const profileController = require('../controllers/profileController')
 const { authenticateToken, authorizeRole, refreshAuthenticateToken } = require('../middlewares/authMiddleware');
 
 router.post('/register', authController.register);
@@ -12,6 +13,8 @@ router.post('/logout', authenticateToken, authController.logout);
 router.post('/email-reset-pass',authController.emailResetPass)
 router.post('/save-new-password/:token', authController.saveNewPassword)
 router.get('/checkauth', authenticateToken, authController.getUser)
+router.get('/getUserDetails', authenticateToken,profileController.getUserDetails)
+router.put('/updateUserDetails',authenticateToken,profileController.updateUserDetails)
 
 // Protected route example
 router.get('/protected', authenticateToken, authorizeRole(['user', 'admin']), (req, res) => {

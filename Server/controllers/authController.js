@@ -12,7 +12,8 @@ function generateTokenHash(email) {
 
 exports.register = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    console.log(req.body)
+    const { email, password, uname } = req.body;
     const exUser = await User.findOne({
       email: email,
     });
@@ -24,7 +25,7 @@ exports.register = async (req, res) => {
       expiresIn: "1d",
     });
 
-    const user = new User({ email, password });
+    const user = new User({ email, password, uname });
     await user.save();
 
     sendEmail(
@@ -228,7 +229,7 @@ exports.verifyEmail = async (req, res) => {
     }
 
     user.isVerified = true;
-    // user.verificationToken = undefined;
+    user.verificationToken = undefined;
     await user.save();
 
     res.status(200).json({ message: "Email verified successfully" });

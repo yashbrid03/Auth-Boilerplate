@@ -20,7 +20,9 @@ export const ForgetPass = () => {
           alert("password and confirmed password doesnt match");
           return
         }
+        console.log(password)
         const response = await api.post(`/auth/save-new-password/${token}`, { password });
+        console.log(response)
         setStatus(response.status);
         console.log("success",response)
       } catch (error) {

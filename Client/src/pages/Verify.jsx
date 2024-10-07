@@ -10,9 +10,12 @@ export const Verify = () => {
   const token = routeParams.token;
   const [status, setStatus] = useState(null);
   useEffect(() => {
+    console.log("first")
     const verif = async () => {
       try {
         const response = await api.get(`/auth/verify-email/${token}`);
+        console.log(response)
+      console.log(response.status)
         setStatus(200);
       } catch (error) {
         setStatus(error.response.status);
@@ -25,6 +28,8 @@ export const Verify = () => {
     try{
       const email = prompt("Enter your email");
       const response = await api.post('auth/resend-verification',{email})
+      console.log(response)
+      console.log(response.status)
       setStatus(1);
     }catch(error){
       setStatus(error.response.status);

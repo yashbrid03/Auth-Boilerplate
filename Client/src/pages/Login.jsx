@@ -14,8 +14,8 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(login({ email, password })).unwrap();
-
+      const resp = await dispatch(login({ email, password })).unwrap();
+      console.log(resp)
       navigateTo("/dashboard");
     } catch (error) {
       console.error("Login failed:", error);
@@ -62,6 +62,7 @@ const Login = () => {
     }
       try{
         const response = await api.post('/auth/email-reset-pass',{email});
+        console.log(response)
         alert("Check mail for password reset link")
       }catch(error){
         if(error.response.status == 400){

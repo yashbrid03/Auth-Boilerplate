@@ -6,6 +6,7 @@ import PrivateRoute from "./components/PrivateRoute.jsx";
 import { Verify } from "./pages/Verify.jsx";
 import { Register } from "./pages/Register.jsx";
 import { ForgetPass } from "./pages/ForgetPass.jsx";
+import { Profile } from "./pages/Profile.jsx";
 import { useState } from "react";
 
 const App = () => {
@@ -15,7 +16,9 @@ const App = () => {
       <Route path="/register" element={<Register/>}/>
       <Route path="/verify-email/:token" element={<Verify />} />
       <Route path="/forget-password/:token" element={<ForgetPass/>}/>
+      
       <Route exact path="/" element={<PrivateRoute />}>
+      <Route path="/profile" element={<Profile/>}/>
         <Route exact path="/dashboard" element={<Dashboard />} />
       </Route>
       {/* Add more routes as needed */}
