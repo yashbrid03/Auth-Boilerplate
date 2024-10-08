@@ -55,8 +55,8 @@ The backend provides the following API routes:
 8. `POST /api/auth/save-new-password/:token`: Save a new password after reset
 9. `GET /api/auth/checkauth`: Check if a user is authenticated
 10. `GET /api/getUserDetails`: Get details of user (requires authentication)
-11. `GET /api/updateUserDetails`: Update details of user (requires authentication)
-12. `GET /api/removeUser/:id`: Delete the User (requires authentication)
+11. `PUT /api/updateUserDetails`: Update details of user (requires authentication)
+12. `DELETE /api/removeUser/:id`: Delete the User (requires authentication)
 
 ### Middleware
 
