@@ -2,24 +2,29 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const sendEmail = require("../config/email");
-const crypto = require('crypto');
+const crypto = require("crypto");
 
 // Generate a unique token hash
 function generateTokenHash(email) {
   const currentTime = Date.now().toString();
-  return crypto.createHash('sha256').update(email + currentTime).digest('hex');
+  return crypto
+    .createHash("sha256")
+    .update(email + currentTime)
+    .digest("hex");
 }
 
 exports.register = async (req, res) => {
   try {
-    console.log(req.body)
+    console.log(req.body);
     const { email, password, uname } = req.body;
     const exUser = await User.findOne({
       email: email,
     });
 
     if (exUser) {
-      return res.status(403).json({ error: "User with this mail already exists." });
+      return res
+        .status(403)
+        .json({ error: "User with this mail already exists." });
     }
     const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, {
       expiresIn: "1d",
@@ -39,7 +44,7 @@ exports.register = async (req, res) => {
         "User registered. Please check your email to verify your account.",
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -71,15 +76,13 @@ exports.saveNewPassword = async (req, res) => {
   try {
     const { token } = req.params;
     const pass = req.body.password;
-    console.log("savepass");
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    console.log(decoded);
     const user = await User.findOne({
       email: decoded.email,
     });
 
-    if (!user  || user.resetPasswordTokenHash !== decoded.tokenHash) {
+    if (!user || user.resetPasswordTokenHash !== decoded.tokenHash) {
       return res
         .status(400)
         .json({ error: "Invalid or expired verification token" });
@@ -88,7 +91,7 @@ exports.saveNewPassword = async (req, res) => {
     user.resetPasswordTokenHash = null;
     await user.save();
 
-    res.status(200).json({ message: "password changed successfully" });
+    return res.status(200).json({ message: "password changed successfully" });
   } catch (error) {
     return res
       .status(400)
@@ -98,11 +101,10 @@ exports.saveNewPassword = async (req, res) => {
 
 exports.emailResetPass = async (req, res) => {
   try {
-    const {email} = req.body;
+    const { email } = req.body;
     const user = await User.findOne({
       email: email,
     });
-    console.log(email)
 
     if (!user) {
       return res.status(400).json({ error: "User is not registered." });
@@ -122,12 +124,11 @@ exports.emailResetPass = async (req, res) => {
       "Your reset password link",
       `Click here to reset your password: ${process.env.FRONTEND_URL}/forget-password/${resetToken}`
     );
-    res.status(201).json({
-      message:
-        "Check Mail for password reset link",
+    return res.status(201).json({
+      message: "Check Mail for password reset link",
     });
   } catch (error) {
-    res.status(403).json({ error: "Invalid request" });
+    return res.status(403).json({ error: "Invalid request" });
   }
 };
 
@@ -168,18 +169,16 @@ exports.login = async (req, res) => {
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
-    res.status(200).json("Logged in successfully");
+    return res.status(200).json("Logged in successfully");
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
 exports.refreshToken = async (req, res) => {
   try {
-    console.log("hello");
     const refreshToken = req.cookies.refreshToken;
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-    console.log("decoded :", refreshToken);
     const user = await User.findById(decoded.userId);
 
     if (!user) {
@@ -198,17 +197,16 @@ exports.refreshToken = async (req, res) => {
       maxAge: 1 * 30 * 1000, //30 secs
     });
 
-    res.json({ message: "Token refreshed successfully" });
+    return res.json({ message: "Token refreshed successfully" });
   } catch (error) {
-    console.log(error);
-    res.status(403).json({ error: "Invalid refresh token" });
+    return res.status(403).json({ error: "Invalid refresh token" });
   }
 };
 
 exports.logout = (req, res) => {
   res.clearCookie("accessToken");
   res.clearCookie("refreshToken");
-  res.json({ message: "Logged out successfully" });
+  return res.json({ message: "Logged out successfully" });
 };
 
 exports.verifyEmail = async (req, res) => {
@@ -232,27 +230,23 @@ exports.verifyEmail = async (req, res) => {
     user.verificationToken = undefined;
     await user.save();
 
-    res.status(200).json({ message: "Email verified successfully" });
+    return res.status(200).json({ message: "Email verified successfully" });
   } catch (error) {
-    res.status(400).json({ error: "Invalid or expired verification token" });
+    return res
+      .status(400)
+      .json({ error: "Invalid or expired verification token" });
   }
 };
 
 exports.getUser = async (req, res) => {
   try {
-    // console.log(res.header)
     const token = req.cookies.accessToken;
-    console.log("inside getauth");
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
       if (err) {
         return res.status(403).json({ error: "Need to Login" });
       }
-      console.log({ user });
-      res.status(200).json({ user: user });
-
-      // next();
+      return res.status(200).json({ user: user });
     });
-    // res.json({user :req.user})
   } catch (error) {
     res.status(400).json({ error: "Need Login" });
   }
