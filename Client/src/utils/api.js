@@ -29,7 +29,6 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-
     if (error.response && error.response.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         try {
@@ -46,20 +45,17 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        
         const { data } = await api.post('/auth/refresh-token');
         isRefreshing = false;
         processQueue(null, data.accessToken);
         return api(originalRequest);
       } catch (refreshError) {
-        
         isRefreshing = false;
         processQueue(refreshError, null);
         store.dispatch(setUser(null));
         return Promise.reject(refreshError);
       }
     }
-
     return Promise.reject(error);
   }
 );

@@ -3,26 +3,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { login, logout, setUser, checkAuth } from "../redux/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../utils/api";
-import { ToastContainer, toast, Bounce } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.auth);
   const navigateTo = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const resp = await dispatch(login({ email, password })).unwrap();
-      // console.log(resp)
+      await dispatch(login({ email, password })).unwrap();
       navigateTo("/dashboard");
     } catch (error) {
-      // console.error("Login failed:", error);
-      if(error == 403){
-        toast.error('Invalid Credentials', {
+      if (error == 403) {
+        toast.error("Invalid Credentials", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: true,
@@ -32,9 +29,8 @@ const Login = () => {
           progress: undefined,
           theme: "colored",
           transition: Bounce,
-          });
+        });
       }
-    } finally {
     }
   };
 
@@ -52,15 +48,11 @@ const Login = () => {
       try {
         const action = await dispatch(checkAuth());
         if (action.error) {
-          // Handle the error
-          console.log("Error:", action.error);
           dispatch(setUser(null));
         } else {
           dispatch(setUser(action.payload));
         }
       } catch (error) {
-        // This will only catch errors in the dispatch itself, not in the thunk
-        console.log("Unexpected error:", error);
         dispatch(setUser(null));
       } finally {
         setIsUserLoading(false);
@@ -70,9 +62,9 @@ const Login = () => {
     getUser();
   }, [dispatch]);
 
-  const resetPass = async() =>{
-    if(email==""){
-      toast.error('Enter email in the field', {
+  const resetPass = async () => {
+    if (email == "") {
+      toast.error("Enter email in the field", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: true,
@@ -82,14 +74,25 @@ const Login = () => {
         progress: undefined,
         theme: "colored",
         transition: Bounce,
-        });
-      // alert("enter email in the field");
+      });
       return;
     }
-      try{
-        const response = await api.post('/auth/email-reset-pass',{email});
-        console.log(response)
-        toast.info('Check mail for password reset link', {
+    try {
+      const response = await api.post("/auth/email-reset-pass", { email });
+      toast.info("Check mail for password reset link", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+      });
+    } catch (error) {
+      if (error.response.status == 400) {
+        toast.error("Provided email is not registered", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: true,
@@ -99,25 +102,10 @@ const Login = () => {
           progress: undefined,
           theme: "colored",
           transition: Bounce,
-          });
-        // alert("Check mail for password reset link")
-      }catch(error){
-        if(error.response.status == 400){
-          toast.error('Provided email is not registered', {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-            transition: Bounce,
-            });
-          // alert("Provided email is not registered")
-        }
+        });
       }
-  }
+    }
+  };
 
   if (isUserLoading) {
     return <div>Loading...</div>; // Or a loading spinner component
@@ -127,31 +115,36 @@ const Login = () => {
     return (
       <>
         <div className="w-full h-[100vh] flex items-center justify-center flex-col  ">
-          
-          <h1 className="text-2xl font-medium my-2">You have already signed In. Please log out if you wish to login with
-          another account</h1>
-          <button className="bg-red-400 px-3 py-2 rounded-lg font-bold " onClick={handleLogout}>logout</button>
+          <h1 className="text-2xl font-medium my-2">
+            You have already signed In. Please log out if you wish to login with
+            another account
+          </h1>
+          <button
+            className="bg-red-400 px-3 py-2 rounded-lg font-bold "
+            onClick={handleLogout}
+          >
+            logout
+          </button>
         </div>
-        
       </>
     );
   }
 
   return (
     <>
-    <ToastContainer
-    position="top-right"
-    autoClose={5000}
-    hideProgressBar
-    newestOnTop={false}
-    closeOnClick
-    rtl={false}
-    pauseOnFocusLoss
-    draggable
-    pauseOnHover
-    theme="colored"
-    transition: Bounce
-    />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition:Bounce
+      />
       <section class="bg-gray-50 dark:bg-gray-900">
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
@@ -213,12 +206,12 @@ const Login = () => {
                 <p class="text-sm font-light text-gray-500 dark:text-gray-400">
                   Don’t have an account yet?{" "}
                   <Link to={"/register"}>
-                  <a
-                    href="#"
-                    class="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                  >
-                    Sign up
-                  </a>
+                    <a
+                      href="#"
+                      class="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                    >
+                      Sign up
+                    </a>
                   </Link>
                 </p>
               </form>

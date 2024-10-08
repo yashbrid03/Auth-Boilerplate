@@ -14,15 +14,11 @@ const PrivateRoute = () => {
       try {
         const action = await dispatch(checkAuth());
         if (action.error) {
-          // Handle the error
-          console.log("Error:", action.error);
           dispatch(setUser(null));
         } else {
           dispatch(setUser(action.payload));
         }
       } catch (error) {
-        // This will only catch errors in the dispatch itself, not in the thunk
-        console.log("Unexpected error:", error);
         dispatch(setUser(null));
       } finally {
         setIsLoading(false);
@@ -33,7 +29,7 @@ const PrivateRoute = () => {
   }, [dispatch]);
 
   if (isLoading) {
-    return <div>Loading...</div>; // Or a loading spinner component
+    return <div>Loading...</div>; 
   }
 
   return user ? <Outlet /> : <Navigate to="/login" />;
