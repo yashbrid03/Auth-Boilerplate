@@ -13,7 +13,6 @@
    - [Redux](#redux)
    - [API Utility](#api-utility)
 6. [Setup and Installation](#setup-and-installation)
-7. [Remaining Task](#remianing-task)
 
 ## Introduction
 
@@ -37,6 +36,7 @@ This Auth Boilerplate is a comprehensive authentication system built using the M
 - Role-based access control
 - Protected routes
 - Refresh token mechanism
+- Profile Page
 - Responsive UI using Tailwind CSS
 
 ## Backend
@@ -54,8 +54,9 @@ The backend provides the following API routes:
 7. `POST /api/auth/email-reset-pass`: Initiate the password reset process
 8. `POST /api/auth/save-new-password/:token`: Save a new password after reset
 9. `GET /api/auth/checkauth`: Check if a user is authenticated
-10. `GET /api/protected`: Example of a protected route (requires authentication)
-11. `GET /api/admin`: Example of an admin-only route
+10. `GET /api/getUserDetails`: Get details of user (requires authentication)
+11. `GET /api/updateUserDetails`: Update details of user (requires authentication)
+12. `GET /api/removeUser/:id`: Delete the User (requires authentication)
 
 ### Middleware
 
@@ -87,6 +88,7 @@ Sample .env file
 4. `ForgetPass`: Manages password reset process ( reset link sent on email can only be used once. contains proper validation when wrong token is passed or token is expired)
 5. `Dashboard`: A protected route example
 6. `PrivateRoute`: A wrapper for protected routes
+7. `Profile`: Profile page to view, update and delete User (User must be logged in i.e. eg. Protected route)
 
 ### Redux
 
@@ -115,6 +117,3 @@ The `api.js` file sets up an Axios instance with:
 - run `npm i` in both terminals
 - start server using `npm start` and client by `npm run dev`
 
-## Remaining Task
-
-- User Management page where user can edit their profile info
