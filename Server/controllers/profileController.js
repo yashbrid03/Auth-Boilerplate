@@ -57,3 +57,24 @@ exports.updateUserDetails = async (req,res) =>{
         res.status(500).json({ error: "Internal server error" });
     }
 }
+
+exports.destroy = async (req, res) => {
+  
+  await User.findByIdAndDelete(req.params.id).then(data => {
+      if (!data) {
+        res.status(404).send({
+          message: `User not found.`
+        });
+      } else {
+        res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+        res.status(200).send({
+          message: "User deleted successfully!"
+        });
+      }
+  }).catch(err => {
+      res.status(500).send({
+        message: err.message
+      });
+  });
+};

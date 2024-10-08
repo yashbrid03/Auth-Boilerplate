@@ -3,6 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import api from '../utils/api';
 import check from '../assets/check.png'
 import cross from '../assets/cross.png'
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const ForgetPass = () => {
     const routeParams = useParams();
@@ -17,7 +19,18 @@ export const ForgetPass = () => {
     try {
         console.log(token)
         if (password != confirmPassword) {
-          alert("password and confirmed password doesnt match");
+          toast.error('Password and Confirmed password doesnt match', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Bounce,
+            });
+          // alert("password and confirmed password doesnt match");
           return
         }
         console.log(password)
@@ -26,20 +39,34 @@ export const ForgetPass = () => {
         setStatus(response.status);
         console.log("success",response)
       } catch (error) {
-        console.log("error",error)
+        console.log("error",error.response.status)
+        if(error.response.status == 400){
+          toast.error('Token is invalid or expired', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Bounce,
+            });
+        }
         setStatus(error.response.status);
       }
 
   }
-  if(status == 400){
-    return(
-        <div  className="w-full h-[100vh] flex items-center justify-center flex-col  ">
-        <img src={cross} width={100}/>
-          <h1  className="text-2xl font-medium my-2">Token is invalid or expired</h1>
-          {/* <Link to={'/login'}><button className="bg-blue-400 px-3 py-2 rounded-lg font-bold ">Login Here</button></Link> */}
-        </div>
-    )
-  }else if(status == 200){
+  // if(status == 400){
+  //   return(
+  //       <div  className="w-full h-[100vh] flex items-center justify-center flex-col  ">
+  //       <img src={cross} width={100}/>
+  //         <h1  className="text-2xl font-medium my-2">Token is invalid or expired</h1>
+  //         {/* <Link to={'/login'}><button className="bg-blue-400 px-3 py-2 rounded-lg font-bold ">Login Here</button></Link> */}
+  //       </div>
+  //   )
+  // }else 
+  if(status == 200){
     return(<div  className="w-full h-[100vh] flex items-center justify-center flex-col  ">
         <img src={check} width={100}/>
           <h1  className="text-2xl font-medium my-2">Password Updated Successfully!</h1>
@@ -47,6 +74,20 @@ export const ForgetPass = () => {
         </div>)
   }
   return (
+    <>
+    <ToastContainer
+    position="top-right"
+    autoClose={5000}
+    hideProgressBar
+    newestOnTop={false}
+    closeOnClick
+    rtl={false}
+    pauseOnFocusLoss
+    draggable
+    pauseOnHover
+    theme="colored"
+    transition: Bounce
+    />
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
@@ -101,5 +142,6 @@ export const ForgetPass = () => {
         </div>
       </div>
     </section>
+    </>
   )
 }

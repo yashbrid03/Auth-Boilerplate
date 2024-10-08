@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { login, logout, setUser, checkAuth } from "../redux/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../utils/api";
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,10 +17,23 @@ const Login = () => {
     e.preventDefault();
     try {
       const resp = await dispatch(login({ email, password })).unwrap();
-      console.log(resp)
+      // console.log(resp)
       navigateTo("/dashboard");
     } catch (error) {
-      console.error("Login failed:", error);
+      // console.error("Login failed:", error);
+      if(error == 403){
+        toast.error('Invalid Credentials', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+          });
+      }
     } finally {
     }
   };
@@ -57,16 +72,49 @@ const Login = () => {
 
   const resetPass = async() =>{
     if(email==""){
-      alert("enter email in the field");
+      toast.error('Enter email in the field', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+        });
+      // alert("enter email in the field");
       return;
     }
       try{
         const response = await api.post('/auth/email-reset-pass',{email});
         console.log(response)
-        alert("Check mail for password reset link")
+        toast.info('Check mail for password reset link', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+          });
+        // alert("Check mail for password reset link")
       }catch(error){
         if(error.response.status == 400){
-          alert("Provided email is not registered")
+          toast.error('Provided email is not registered', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Bounce,
+            });
+          // alert("Provided email is not registered")
         }
       }
   }
@@ -91,6 +139,19 @@ const Login = () => {
 
   return (
     <>
+    <ToastContainer
+    position="top-right"
+    autoClose={5000}
+    hideProgressBar
+    newestOnTop={false}
+    closeOnClick
+    rtl={false}
+    pauseOnFocusLoss
+    draggable
+    pauseOnHover
+    theme="colored"
+    transition: Bounce
+    />
       <section class="bg-gray-50 dark:bg-gray-900">
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">

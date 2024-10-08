@@ -7,9 +7,9 @@ export const login = createAsyncThunk(
     try {
       const response = await api.post('/auth/login', credentials);
     
-      return response.data;
+      return response.status;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.status);
     }
   }
 );

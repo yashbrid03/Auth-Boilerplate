@@ -19,7 +19,7 @@ exports.register = async (req, res) => {
     });
 
     if (exUser) {
-      res.status(403).json({ error: "User with this mail already exists." });
+      return res.status(403).json({ error: "User with this mail already exists." });
     }
     const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, {
       expiresIn: "1d",
@@ -34,7 +34,7 @@ exports.register = async (req, res) => {
       `Click here to verify: ${process.env.FRONTEND_URL}/verify-email/${verificationToken}`
     );
 
-    res.status(201).json({
+    return res.status(201).json({
       message:
         "User registered. Please check your email to verify your account.",
     });

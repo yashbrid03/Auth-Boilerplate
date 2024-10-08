@@ -15,6 +15,7 @@ router.post('/save-new-password/:token', authController.saveNewPassword)
 router.get('/checkauth', authenticateToken, authController.getUser)
 router.get('/getUserDetails', authenticateToken,profileController.getUserDetails)
 router.put('/updateUserDetails',authenticateToken,profileController.updateUserDetails)
+router.delete('/removeUser/:id',authenticateToken,profileController.destroy)
 
 // Protected route example
 router.get('/protected', authenticateToken, authorizeRole(['user', 'admin']), (req, res) => {

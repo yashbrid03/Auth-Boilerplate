@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import api from "../utils/api";
 import register from '../redux/authSlice'
 import { useDispatch } from "react-redux";
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
+
 
 export const Register = () => {
   const [email, setEmail] = useState("");
@@ -15,20 +18,41 @@ export const Register = () => {
     e.preventDefault();
     try {
       if (password != confirmPassword) {
-        alert("password and confirmed password doesnt match");
+        toast.error('password and confirmed password doesnt match', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+          });
+        // alert("password and confirmed password doesnt match");
         return;
       }
       console.log({ email, password, uname })
       const response = await api.post('/auth/register',{ email, password, uname });
       // const action = await dispatch(register({ email, password, uname }));
       // const response = dispatch(register({ email, password, uname }))
-      console.log("hello")
+      
       // const response = api.post("/auth/register", { email, password, uname });
       setStatus(response.status);
       console.log(response)
     } catch (error) {
       if (error.response.status == 403) {
-        alert("this email is already registered ");
+        toast.error('User already registered', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+          });
       }
       setStatus(error.response.status);
     }
@@ -44,6 +68,20 @@ export const Register = () => {
     );
   }
   return (
+    <>
+    <ToastContainer
+position="top-right"
+autoClose={5000}
+hideProgressBar
+newestOnTop={false}
+closeOnClick
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="colored"
+transition: Bounce
+/>
     <section class="bg-gray-50 dark:bg-gray-900">
       <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
@@ -133,5 +171,6 @@ export const Register = () => {
         </div>
       </div>
     </section>
+    </>
   );
 };
