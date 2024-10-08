@@ -15,8 +15,36 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(login({ email, password })).unwrap();
-      navigateTo("/dashboard");
+      if (email != "" && password != "") {
+        await dispatch(login({ email, password })).unwrap();
+        navigateTo("/dashboard");
+      } else {
+        if (email == "") {
+          toast.error("please enter the email", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Bounce,
+          });
+        } else {
+          toast.error("please enter password", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Bounce,
+          });
+        }
+      }
     } catch (error) {
       if (error == 403) {
         toast.error("Invalid Credentials", {
@@ -219,26 +247,6 @@ const Login = () => {
           </div>
         </div>
       </section>
-      {/* <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          required
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          required
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form> */}
-      {/* <button onClick={handleLogout}>logout</button> */}
     </>
   );
 };

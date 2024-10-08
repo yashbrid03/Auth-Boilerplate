@@ -29,18 +29,32 @@ export const Profile = () => {
     e.preventDefault();
     try {
       if (number >= 1111111111 && number <= 9999999999) {
-        await api.put("/auth/updateUserDetails", { name, number });
-        toast.success("User details updated successfully", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          transition: Bounce,
-        });
+        if (name != "" && name != null) {
+          await api.put("/auth/updateUserDetails", { name, number });
+          toast.success("User details updated successfully", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Bounce,
+          });
+        } else {
+          toast.error("Name cannot be empty", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Bounce,
+          });
+        }
       } else {
         toast.error("Phone number must be 10 digit", {
           position: "top-right",
@@ -54,10 +68,7 @@ export const Profile = () => {
           transition: Bounce,
         });
       }
-
-      // alert("details updated successfully")
     } catch (error) {
-      // alert(error)
     }
   };
 

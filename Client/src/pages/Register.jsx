@@ -27,6 +27,20 @@ export const Register = () => {
         });
         return;
       }
+      if (password.length < 7) {
+        toast.error("password must be atleast 7 character long", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
+        return;
+      }
       const response = await api.post("/auth/register", {
         email,
         password,
