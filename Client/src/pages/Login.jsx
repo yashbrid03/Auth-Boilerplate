@@ -58,7 +58,7 @@ const Login = () => {
           theme: "colored",
           transition: Bounce,
         });
-      }else if(error.response.status == 405){
+      }else if(error == 405){
         toast.error("Verify your email", {
           position: "top-right",
           autoClose: 5000,
