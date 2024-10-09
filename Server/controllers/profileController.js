@@ -57,8 +57,15 @@ exports.destroy = async (req, res) => {
           message: `User not found.`,
         });
       } else {
-        res.clearCookie("accessToken");
-        res.clearCookie("refreshToken");
+        const cookieOptions = {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+          domain: process.env.COOKIE_DOMAIN || undefined
+        };
+      
+        res.clearCookie('accessToken', cookieOptions);
+        res.clearCookie('refreshToken', cookieOptions);
         return res.status(200).send({
           message: "User deleted successfully!",
         });
