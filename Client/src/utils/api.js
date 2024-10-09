@@ -3,7 +3,7 @@ import { store } from '../redux/store';
 import { setUser } from '../redux/authSlice';
 
 const api = axios.create({
-  baseURL: process.env.SERVER_URL,
+  baseURL: import.meta.env.VITE_APP_SERVER_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json"
