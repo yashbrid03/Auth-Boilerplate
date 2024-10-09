@@ -214,8 +214,15 @@ exports.refreshToken = async (req, res) => {
 };
 
 exports.logout = (req, res) => {
-  res.clearCookie("accessToken");
-  res.clearCookie("refreshToken");
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+    domain: process.env.COOKIE_DOMAIN || undefined
+  };
+
+  res.clearCookie('accessToken', cookieOptions);
+  res.clearCookie('refreshToken', cookieOptions);
   return res.json({ message: "Logged out successfully" });
 };
 
