@@ -58,6 +58,18 @@ const Login = () => {
           theme: "colored",
           transition: Bounce,
         });
+      }else if(error.response.status == 405){
+        toast.error("Verify your email", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
       }
     }
   };

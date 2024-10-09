@@ -142,7 +142,7 @@ exports.login = async (req, res) => {
     }
 
     if (!user.isVerified) {
-      return res.status(403).json({ error: "Please verify your email first" });
+      return res.status(405).json({ error: "Please verify your email first" });
     }
 
     const accessToken = jwt.sign(
