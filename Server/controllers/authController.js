@@ -156,18 +156,28 @@ exports.login = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      sameSite: "strict",
-      maxAge: 1 * 30 * 1000, // 30 sec
-    });
-
-    res.cookie("refreshToken", refreshToken, {
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      sameSite: process.env.NODE_ENV === "production" ? 'None' : 'Lax',
+      maxAge: 15 * 60 * 1000, // 15 minutes for access token
+      domain: process.env.COOKIE_DOMAIN || undefined
+    };
+
+    res.cookie("accessToken", accessToken, cookieOptions);
+
+    res.cookie("refreshToken", refreshToken, {
+      ...cookieOptions,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days for refresh token
+    });
+
+    // Log cookie settings for debugging
+    console.log('Cookie settings:', {
+      accessToken: !!accessToken,
+      refreshToken: !!refreshToken,
+      cookieOptions,
+      env: process.env.NODE_ENV,
+      cookieDomain: process.env.COOKIE_DOMAIN
     });
     return res.status(200).json("Logged in successfully");
   } catch (error) {
