@@ -68,8 +68,7 @@ export const Profile = () => {
           transition: Bounce,
         });
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const deleteProfile = async () => {
